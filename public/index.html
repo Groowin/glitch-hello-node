@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Ғарыш Жарысы - Үлкен Тақта</title>
+    <style>
+        body { background-color: #0b0c10; color: white; font-family: Arial; text-align: center; margin: 0; padding: 20px; overflow: hidden; }
+        h1 { color: #66fcf1; }
+        .track { width: 90%; height: 80px; background: #1f2833; margin: 30px auto; border-radius: 40px; position: relative; border: 2px dashed #45a29e; }
+        .ship { font-size: 50px; position: absolute; left: 0%; top: 10px; transition: left 0.5s ease-out; }
+        #qrcode-container { margin-top: 30px; }
+        img { border: 10px solid white; border-radius: 10px; }
+        button { padding: 10px 20px; background: red; color: white; border: none; cursor: pointer; border-radius: 5px; margin-top: 20px;}
+    </style>
+</head>
+<body>
+
+    <h1>🚀 ҒАҒАРЫШ ЖАРЫСЫ 🛸</h1>
+    
+    <div id="qrcode-container">
+        <h3>Ойынға қосылу үшін QR кодты сканерлеңіз:</h3>
+        <img id="qrcode" src="" alt="QR Code">
+    </div>
+
+    <!-- Қызыл топ -->
+    <div class="track">
+        <div class="ship" id="red-ship">🚀</div>
+    </div>
+
+    <!-- Көк топ -->
+    <div class="track">
+        <div class="ship" id="blue-ship">🛸</div>
+    </div>
+
+    <button onclick="resetGame()">Ойынды қайта бастау (Админ)</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Автоматты түрде QR код жасау
+        const playerUrl = window.location.href + 'player.html';
+        document.getElementById('qrcode').src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + encodeURIComponent(playerUrl);
+
+        // Кемелерді жылжыту
+        socket.on('updateScores', (scores) => {
+            document.getElementById('red-ship').style.left = scores.red + '%';
+            document.getElementById('blue-ship').style.left = scores.blue + '%';
+        });
+
+        function resetGame() {
+            socket.emit('resetGame');
+        }
+    </script>
+</body>
+</html>
